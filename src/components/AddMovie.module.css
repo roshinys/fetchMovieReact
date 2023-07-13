@@ -1,0 +1,36 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.formDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.formDiv input,
+.formDiv textarea {
+  width: 100%;
+  padding: 4px 12px;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 5px 0;
+  font-size: 15px;
+}
+
+.formDiv input {
+  height: 30px;
+}
+.formDiv textarea {
+  height: 70px;
+}
+
+.formButton {
+  width: 100%;
+  margin-top: 15px;
+  margin-bottom: 0;
+}
