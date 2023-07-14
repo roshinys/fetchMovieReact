@@ -13,20 +13,23 @@ function App() {
     setError(null);
     setIsLoading(true);
     try {
-      const response = await fetch("https://swapi.dev/api/films/");
+      const response = await fetch(
+        `${process.env.REACT_APP_FIREBASE_URL}/movies.json`
+      );
       if (!response.ok) {
         throw new Error("Something went wrong ....Retrying ");
       }
       const data = await response.json();
-      const transformedMovies = data.results.map((movieData) => {
-        return {
-          id: movieData.episode_id,
-          title: movieData.title,
-          openingText: movieData.opening_crawl,
-          releaseDate: movieData.release_date,
-        };
-      });
-      setMovies(transformedMovies);
+      const loadedMovies = [];
+      for (const key in data) {
+        loadedMovies.push({
+          id: key,
+          title: data[key].title,
+          openingText: data[key].openingText,
+          releaseDate: data[key].releaseDate,
+        });
+      }
+      setMovies(loadedMovies);
     } catch (err) {
       setError(err.message);
     }
@@ -38,9 +41,42 @@ function App() {
     fetchMovieHandler();
   }, [fetchMovieHandler]);
 
+  async function addMovieHandler(movie) {
+    const response = await fetch(
+      `${process.env.REACT_APP_FIREBASE_URL}/movies.json`,
+      {
+        method: "POST",
+        body: JSON.stringify(movie),
+        header: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+  }
+
+  async function deleteMovieHandler(movieId) {
+    const response = await fetch(
+      `${process.env.REACT_APP_FIREBASE_URL}//movies/${movieId}.json`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.ok) {
+      console.log("Movie deleted successfully.");
+    } else {
+      console.error("Error deleting movie:", response.status);
+    }
+    fetchMovieHandler();
+  }
+
   let content = <p>Found No Movies...</p>;
   if (movies.length > 0) {
-    content = <MoviesList movies={movies} />;
+    content = <MoviesList movies={movies} onDeleteMovie={deleteMovieHandler} />;
   }
   if (error) {
     content = <p>{error}</p>;
@@ -52,7 +88,7 @@ function App() {
   return (
     <React.Fragment>
       <section>
-        <AddMovie />
+        <AddMovie onAddMovie={addMovieHandler} />
       </section>
       <section>
         <button onClick={fetchMovieHandler}>Fetch Movies</button>

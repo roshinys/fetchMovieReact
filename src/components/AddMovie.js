@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styles from "./AddMovie.module.css";
 
-function AddMovie() {
+function AddMovie(props) {
   const [title, setTitle] = useState("");
   const [openingText, setOpeningText] = useState("");
-  const [releaseDate, setreleaseDate] = useState("");
+  const [releaseDate, setReleaseDate] = useState("");
   const [movieValid, setMovieValid] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ function AddMovie() {
   };
 
   const dateChangeHandler = (e) => {
-    setreleaseDate(e.target.value);
+    setReleaseDate(e.target.value);
   };
 
   const isValidDate = (dateString) => {
@@ -39,9 +39,15 @@ function AddMovie() {
   const formSubmitHandler = (e) => {
     e.preventDefault();
     if (movieValid) {
-      console.log(title);
-      console.log(openingText);
-      console.log(releaseDate);
+      const movie = {
+        title: title,
+        openingText: openingText,
+        releaseDate: releaseDate,
+      };
+      props.onAddMovie(movie);
+      setTitle("");
+      setOpeningText("");
+      setReleaseDate("");
     } else {
       console.log("nt a valid movie");
     }
